@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Runtime.Intrinsics.X86;
 
 namespace Agenda_Telefone
 {
@@ -6,7 +7,7 @@ namespace Agenda_Telefone
     {
         static void Main(string[] args)
         {
-            ContactList contactList = new ContactList();
+            List<Contact> contactList = new();
 
             int option;
 
@@ -27,9 +28,7 @@ namespace Agenda_Telefone
                         EditContact(contactList);
                         break;
                     case 4:
-                        Console.Clear();
-                        contactList.Print();
-                        Console.ReadKey();
+                        PrintAll(contactList);
                         break;
                     case 5:
                         FindContact(contactList);
@@ -55,11 +54,11 @@ namespace Agenda_Telefone
             return op;
         }
 
-        static void AddContact(ContactList contactList)
+        static void AddContact(List<Contact> contactList)
         {
             Contact contact;
             string name, email;
-            PhoneList phoneList;
+            List<Phone> phoneList;
             Adress adress;
 
             Console.Clear();
@@ -84,9 +83,9 @@ namespace Agenda_Telefone
             Console.ReadKey();
         }
 
-        static PhoneList RegisterPhones()
+        static List<Phone> RegisterPhones()
         {
-            PhoneList phoneList = new PhoneList();
+            List<Phone> phoneList = new();
             string option = "";
 
             int cont = 1;
@@ -102,6 +101,8 @@ namespace Agenda_Telefone
 
                 cont++;
             } while (option.Equals("1"));
+
+            //phoneList.Sort();
 
             return phoneList;
         }
@@ -139,19 +140,28 @@ namespace Agenda_Telefone
             return new Adress(cep, locality, state, publicPlace, publicPlaceType, neighborhood, number, complement);
         }
 
-        static void RemoveContact(ContactList contactList)
+        static void RemoveContact(List<Contact> contactList)
         {
             string name;
+            bool find = false;
 
             Console.Clear();
             Console.WriteLine("Digite o Nome do contato a ser removido:");
             name = Console.ReadLine();
 
-            if(contactList.RemoveFromName(name))
+
+            foreach(Contact contact in contactList)
             {
-                Console.WriteLine("\n**Contato removido com sucesso!**");
+                if(contact.Name == name)
+                {
+                    contactList.Remove(contact);
+                    Console.WriteLine("\n**Contato removido com sucesso!**");
+                    find = true;
+                    break;
+                }
             }
-            else
+
+            if (!find)
             {
                 Console.WriteLine("\n**Contato inexistente!**");
             }
@@ -159,7 +169,7 @@ namespace Agenda_Telefone
             Console.ReadKey();
         }
 
-        static void FindContact(ContactList contactList)
+        static void FindContact(List<Contact> contactList)
         {
             string name;
 
@@ -168,39 +178,46 @@ namespace Agenda_Telefone
             name = Console.ReadLine();
 
             Console.Clear();
-            contactList.PrintByName(name);
+            PrintByName(contactList, name);
             Console.ReadKey();
         }
 
-        static void EditContact(ContactList contactList)
+        static void EditContact(List<Contact> contactList)
         {
             string name;
-            Contact contact;
+            Contact? contact = null;
 
             Console.Clear();
             Console.WriteLine("Digite o nome do usuário a ser editado:");
             name = Console.ReadLine();
 
-            contact = contactList.FindByName(name);
+            foreach(var item in contactList)
+            {
+                if(item.Name == name)
+                {
+                    contact = item;
+                }
+            }
+
             if (contact != null)
             {
                 switch (MenuEditar()) 
                 {
                     case 1:
                         Console.WriteLine($"Editar nome - {name}");
-                        contact.SetName(Console.ReadLine());
+                        contact.Name = Console.ReadLine();
                         break;
                     case 2:
                         Console.WriteLine("Editar telefones");
-                        contact.SetPhoneList(RegisterPhones());
+                        contact.PhoneList = RegisterPhones();
                         break;
                     case 3:
                         Console.WriteLine("Editar endereço");
-                        contact.SetAdress(RegisterAdress());
+                        contact.Adress = RegisterAdress();
                         break;
                     case 4:
-                        Console.WriteLine($"Editar email - {contact.GetEmail()}");
-                        contact.SetEmail(Console.ReadLine());
+                        Console.WriteLine($"Editar email - {contact.Email}");
+                        contact.Email = Console.ReadLine();
                         break;
                 }
 
@@ -230,6 +247,68 @@ namespace Agenda_Telefone
 
             Console.Clear();
             return op;
+        }
+
+        static void PrintByName(List<Contact> contacts, string name)
+        {
+            bool find = false;
+
+            foreach (Contact contact in contacts)
+            {
+                if (contact.Name == name)
+                {
+                    Console.WriteLine($"Nome: {contact.Name}");
+                    Console.WriteLine();
+                    Console.WriteLine($"Telefones");
+
+                    int cont = 1;
+                    foreach(Phone phone in contact.PhoneList)
+                    {
+                        Console.WriteLine($"\tT{cont} >> {phone.Number}");
+                        cont++;
+                    }
+
+                    Adress auxAdress = contact.Adress;
+                    Console.WriteLine();
+                    Console.WriteLine("Endereço");
+                    Console.WriteLine($"\tCEP: {auxAdress.PostalCode}");
+                    Console.WriteLine($"\tCidade: {auxAdress.Locality}, {auxAdress.State}");
+                    Console.WriteLine($"\tLogradouro: {auxAdress.PublicPlaceType} {auxAdress.PublicPlace}");
+                    Console.WriteLine($"\tNumero: {auxAdress.Number}");
+                    Console.WriteLine($"\tBairro: {auxAdress.Neighborhood}");
+                    Console.WriteLine($"\tComplemento: {auxAdress.Complement}");
+
+                    Console.WriteLine();
+                    Console.WriteLine($"Email: {contact.Email}");
+
+                    find = true;
+                    break;
+                }
+            }
+
+            if (!find)
+            {
+                Console.WriteLine("\n**Usuário não encontrado!**");
+            }
+
+        }
+
+        static void PrintAll(List<Contact> contacts)
+        {
+            bool isEmpty = true;
+            Console.Clear();
+            foreach (Contact contact in contacts)
+            {
+                Console.WriteLine("\n====================================\n");
+                PrintByName(contacts, contact.Name);
+                isEmpty = false;
+            }
+
+            if(isEmpty)
+            {
+                Console.WriteLine("\n**Lista Vazia!**");
+            }
+            Console.ReadKey();
         }
     }
 }
