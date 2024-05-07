@@ -8,70 +8,30 @@ namespace Agenda_Telefone
 {
     internal class Adress
     {
-        string cep;
-        string locality;
-        string state;
-        string publicPlace;
-        string publicPlaceType;
-        string neighborhood;
-        int number;
-        string complement;
+        public string PostalCode { get; set; }
+        public string Locality { get; set; }
+        public string State { get; set; }
+        public string PublicPlace { get; set; }
+        public string PublicPlaceType { get; set; }
+        public string Neighborhood { get; set; }
+        public int Number { get; set; }
+        public string Complement { get; set; }
 
-        public Adress(string cep, string locality, string state, string publicPlace, string publicPlaceType, string neighborhood, int number, string complement)
+        public Adress(string postalCode, string locality, string state, string publicPlace, string publicPlaceType, string neighborhood, int number, string complement)
         {
-            this.cep = cep;
-            this.locality = locality;
-            this.state = state;
-            this.publicPlace = publicPlace;
-            this.publicPlaceType = publicPlaceType;
-            this.neighborhood = neighborhood;
-            this.number = number;
-            this.complement = complement;
-        }
-
-        public string GetCep()
-        {
-            return cep;
-        }
-
-        public string GetLocality()
-        {
-            return locality;
-        }
-
-        public string GetState()
-        {
-            return state;
-        }
-
-        public string GetPublicPlace()
-        {
-            return publicPlace;
-        }
-
-        public string GetPublicPlaceType()
-        {
-            return publicPlaceType;
-        }
-
-        public string GetNeighborhood()
-        {
-            return neighborhood;
-        }
-
-        public int GetNumber()
-        {
-            return number;
-        }
-
-        public string GetComplement()
-        {
-            return complement;
+            this.PostalCode = postalCode;
+            this.Locality = locality;
+            this.State = state;
+            this.PublicPlace = publicPlace;
+            this.PublicPlaceType = publicPlaceType;
+            this.Neighborhood = neighborhood;
+            this.Number = number;
+            this.Complement = complement;
         }
 
         public override string? ToString()
         {
-            string valor = "\n* Endereço\n" +
+            /*string valor = "\n* Endereço\n" +
                     $"CEP............: {cep}\n" +
                     $"Localidade.....: {locality}\n" +
                     $"UF.............: {state}\n" +
@@ -81,9 +41,9 @@ namespace Agenda_Telefone
             if (complement != "")
             {
                 valor += $"Complemento.......: {complement}";
-            }
+            }*/
 
-            return valor;
+            return $"{PostalCode};{Locality};{State};{PublicPlaceType};{PublicPlace};{Number};{Neighborhood}";
         }
     }
 }

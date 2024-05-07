@@ -8,29 +8,14 @@ namespace Agenda_Telefone
 {
     internal class Phone
     {
-        string number;
+        public string Number { get; set; }
 
-        Phone? next;
+        public Phone? Next { get; set; }
 
         public Phone(string n)
         {
-            number = n;
-            next = null;
-        }
-
-        public string GetNumber()
-        {
-            return number;
-        }
-
-        public void SetNext(Phone next)
-        {
-            this.next = next;
-        }
-
-        public Phone GetNext()
-        {
-            return next;
+            Number = n;
+            Next = null;
         }
     }
 }
