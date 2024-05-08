@@ -7,12 +7,18 @@ namespace Agenda_Telefone
     {
         static void Main(string[] args)
         {
-            List<Contact> contactList = new();
+
+            string path = @"C:\DadosAgendaContatos\";
+            string contactsFile = "contacts.txt";
 
             int option;
 
+            List<Contact> contactList;
+            contactList = LoadFile(path, contactsFile);
+
             do
             {
+                contactList.Sort(new CompareName());
                 Console.Clear();
                 option = Menu();
 
@@ -35,6 +41,8 @@ namespace Agenda_Telefone
                         break;
                 }
             } while(option != 0);
+
+            SaveFile(contactList, path, contactsFile);
         }
 
         static int Menu()
@@ -86,23 +94,15 @@ namespace Agenda_Telefone
         static List<Phone> RegisterPhones()
         {
             List<Phone> phoneList = new();
-            string option = "";
 
-            int cont = 1;
+            int cont = 0;
             do
             {
-                Console.WriteLine($"\nDigite o Telefone {cont}");
+                Console.WriteLine($"\nDigite o Telefone {cont+1}");
                 phoneList.Add(new Phone(Console.ReadLine()));
 
-                Console.WriteLine("\nDeseja adicionar mais um telefone?");
-                Console.WriteLine("1 - Sim");
-                Console.WriteLine("Qualquer tecla - Não");
-                option = Console.ReadLine();
-
                 cont++;
-            } while (option.Equals("1"));
-
-            //phoneList.Sort();
+            } while (cont < 2);
 
             return phoneList;
         }
@@ -222,13 +222,13 @@ namespace Agenda_Telefone
                 }
 
                 Console.WriteLine("\n**Parâmetros editados com sucesso!**");
-                Console.ReadKey();
 
             }
             else
             {
                 Console.WriteLine("\n**Usuário não encontrado!**");
             }
+            Console.ReadKey();
         }
 
         static int MenuEditar()
@@ -309,6 +309,69 @@ namespace Agenda_Telefone
                 Console.WriteLine("\n**Lista Vazia!**");
             }
             Console.ReadKey();
+        }
+
+        static void SaveFile(List<Contact> l, string path, string file)
+        {
+            CheckPath(path, file);
+
+            StreamWriter sw = new StreamWriter(path + file);
+
+            foreach (var contact in l)
+            {
+                sw.WriteLine(contact.ToString());
+            }
+
+            sw.Close();
+        }
+
+        static List<Contact> LoadFile(string path, string file)
+        {
+            CheckPath(path, file);
+
+            List<Contact> l = new List<Contact>();
+            foreach (var linha in File.ReadAllLines(path + file))
+            {
+                string[] fields = linha.Split(";");
+
+                string name = fields[0];
+
+                Phone phone1 = new Phone(fields[1]);
+                Phone phone2 = new Phone(fields[2]);
+                List<Phone> phoneList = new List<Phone>();
+                phoneList.Add(phone1);
+                phoneList.Add(phone2);
+
+                string postalCode = fields[3];
+                string locality = fields[4];
+                string state = fields[5];
+                string publicPlace = fields[6];
+                string publicPalceType = fields[7];
+                int number = int.Parse(fields[8]);
+                string neighborhood = fields[9];
+                string complement = fields[10];
+
+                Adress adress = new Adress(postalCode, locality, state, publicPlace, publicPalceType, neighborhood, number, complement);
+
+                string email = fields[11];
+
+                l.Add(new Contact(name, phoneList, adress, email));
+            }
+
+            return l;
+        }
+
+        static void CheckPath(string path, string file)
+        {
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+
+            if (!File.Exists(path + file))
+            {
+                File.Create(path + file);
+            }
         }
     }
 }

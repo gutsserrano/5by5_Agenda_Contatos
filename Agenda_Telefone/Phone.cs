@@ -10,12 +10,14 @@ namespace Agenda_Telefone
     {
         public string Number { get; set; }
 
-        public Phone? Next { get; set; }
-
         public Phone(string n)
         {
             Number = n;
-            Next = null;
+        }
+
+        public override string? ToString()
+        {
+            return Number;
         }
     }
 }

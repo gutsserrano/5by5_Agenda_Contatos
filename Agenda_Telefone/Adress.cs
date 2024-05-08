@@ -43,7 +43,7 @@ namespace Agenda_Telefone
                 valor += $"Complemento.......: {complement}";
             }*/
 
-            return $"{PostalCode};{Locality};{State};{PublicPlaceType};{PublicPlace};{Number};{Neighborhood}";
+            return $"{PostalCode};{Locality};{State};{PublicPlace};{PublicPlaceType};{Number};{Neighborhood};{Complement}";
         }
     }
 }

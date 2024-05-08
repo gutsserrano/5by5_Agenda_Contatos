@@ -13,15 +13,17 @@ namespace Agenda_Telefone
         public Adress Adress { get; set; }
         public string Email { get; set; }
 
-        public Contact? Next { get; set; }
-
         public Contact(string name, List<Phone> phoneList, Adress adress, string email)
         {
             this.Name = name;
             this.PhoneList = phoneList;
             this.Adress = adress;
             this.Email = email;
-            Next = null;
+        }
+
+        public override string ToString()
+        {
+            return $"{Name};{PhoneList[0]};{PhoneList[1]};{Adress.ToString()};{Email}";
         }
     }
 }
